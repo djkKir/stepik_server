@@ -1,6 +1,9 @@
 package main;
 import accounts.AccountService;
 import accounts.UserProfile;
+import dbService.DBException;
+import dbService.DBService;
+import dbService.dataSets.UsersDataSet;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -12,11 +15,16 @@ import servlets.SingUpServlet;
 
 
 public class Main {
+
+
     public static void main(String[] args) throws Exception {
         AccountService accountService = new AccountService();
 
-        accountService.addNewUser(new UserProfile("admin"));
-        accountService.addNewUser(new UserProfile("test"));
+
+        DBService dbS = new DBService();
+       // dbS.cleanUp();
+        dbS.createUsers();
+
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
@@ -34,6 +42,7 @@ public class Main {
         Server server = new Server(8080);
         server.setHandler(handlers);
         System.out.println("Server started");
+
 
         server.start();
         server.join();

@@ -2,6 +2,8 @@ package servlets;
 
 import accounts.AccountService;
 import accounts.UserProfile;
+import dbService.DBException;
+import dbService.dataSets.UsersDataSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,13 +25,13 @@ public class SingUpServlet extends HttpServlet {
         String login = request.getParameter("login");
         String pass = request.getParameter("password");
 
-        if (login == null || pass == null) {
+        if (login == null || pass == null || login.equals("") || pass.equals("")) {
             response.setContentType("text/html;charset=utf-8");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        //response.getWriter().println("ok");
-        accountService.addNewUser(new UserProfile(login));
+
+        accountService.addNewUser(login, pass);
 
 
     }

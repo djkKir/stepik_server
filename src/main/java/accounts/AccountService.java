@@ -1,5 +1,9 @@
 package accounts;
 
+import dbService.DBException;
+import dbService.DBService;
+import dbService.dataSets.UsersDataSet;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,31 +15,45 @@ import java.util.Map;
  *         Описание курса и лицензия: https://github.com/vitaly-chibrikov/stepic_java_webserver
  */
 public class AccountService {
-    private final Map<String, UserProfile> loginToProfile;
-    private final Map<String, UserProfile> sessionIdToProfile;
+
+    private DBService dbService;
+
 
     public AccountService() {
-        loginToProfile = new HashMap<>();
-        sessionIdToProfile = new HashMap<>();
+        dbService = new DBService();
     }
 
-    public void addNewUser(UserProfile userProfile) {
-        loginToProfile.put(userProfile.getLogin(), userProfile);
+    public void addNewUser(String login, String pass) {
+        try {
+            long userID = dbService.addUser(login, pass);
+           // System.out.println("Added user id: " + userID);
+            UsersDataSet dataSet = dbService.getUser(userID);
+          //  System.out.println("User data set: " + dataSet);
+        } catch (DBException e) {
+            e.printStackTrace();
+        }
     }
 
-    public UserProfile getUserByLogin(String login) {
-        return loginToProfile.get(login);
-    }
+    public UsersDataSet getUserByLogin(String login) {
 
-    public UserProfile getUserBySessionId(String sessionId) {
-        return sessionIdToProfile.get(sessionId);
-    }
 
-    public void addSession(String sessionId, UserProfile userProfile) {
-        sessionIdToProfile.put(sessionId, userProfile);
+        try {
+            return dbService.getUserLog(login);
+        } catch (DBException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
-
-    public void deleteSession(String sessionId) {
-        sessionIdToProfile.remove(sessionId);
-    }
+//
+//    public UserProfile getUserBySessionId(String sessionId) {
+//        return sessionIdToProfile.get(sessionId);
+//    }
+//
+//    public void addSession(String sessionId, UserProfile userProfile) {
+//        sessionIdToProfile.put(sessionId, userProfile);
+//    }
+//
+//    public void deleteSession(String sessionId) {
+//        sessionIdToProfile.remove(sessionId);
+//    }
 }
